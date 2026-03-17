@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMICE</title>
+  <meta name="description" content="LUMICE — A Finnish ice experience. Coming soon.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #050a14;
+      color: #e0e8f0;
+      overflow-x: hidden;
+    }
+
+    /* --- HERO --- */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      filter: brightness(0.55) saturate(1.1);
+    }
+
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 10, 20, 0.3) 0%,
+        rgba(5, 10, 20, 0.1) 40%,
+        rgba(5, 10, 20, 0.5) 75%,
+        rgba(5, 10, 20, 1) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      padding: 0 24px;
+      max-width: 720px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 10vw, 7rem);
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #a8d4f0 50%, #7ec8e3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-indent: 0.35em;
+    }
+
+    .tagline {
+      font-size: clamp(0.75rem, 2vw, 1rem);
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: rgba(168, 212, 240, 0.7);
+      margin-bottom: 48px;
+      font-weight: 300;
+      text-indent: 0.45em;
+    }
+
+    .hero-divider {
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(126, 200, 227, 0.5), transparent);
+      margin: 0 auto 48px;
+    }
+
+    .coming-soon {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 12px;
+    }
+
+    .season {
+      font-size: 0.85rem;
+      color: rgba(168, 212, 240, 0.5);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 56px;
+      font-weight: 300;
+    }
+
+    /* --- EMAIL SIGNUP --- */
+    .signup-form {
+      display: flex;
+      gap: 0;
+      max-width: 440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .signup-form input[type="email"] {
+      flex: 1;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(126, 200, 227, 0.2);
+      border-right: none;
+      border-radius: 4px 0 0 4px;
+      color: #e0e8f0;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .signup-form input[type="email"]::placeholder {
+      color: rgba(168, 212, 240, 0.4);
+    }
+
+    .signup-form input[type="email"]:focus {
+      border-color: rgba(126, 200, 227, 0.5);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .signup-form button {
+      padding: 14px 28px;
+      background: rgba(126, 200, 227, 0.15);
+      border: 1px solid rgba(126, 200, 227, 0.2);
+      border-radius: 0 4px 4px 0;
+      color: rgba(168, 212, 240, 0.9);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .signup-form button:hover {
+      background: rgba(126, 200, 227, 0.25);
+      border-color: rgba(126, 200, 227, 0.4);
+      color: #fff;
+    }
+
+    .signup-note {
+      font-size: 0.72rem;
+      color: rgba(168, 212, 240, 0.3);
+      margin-top: 14px;
+      letter-spacing: 0.03em;
+    }
+
+    /* --- SCROLL CUE --- */
+    .scroll-cue {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.4;
+      transition: opacity 0.3s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: rgba(168, 212, 240, 0.6);
+    }
+
+    .scroll-cue:hover {
+      opacity: 0.7;
+    }
+
+    .scroll-cue span {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+
+    .scroll-cue svg {
+      width: 20px;
+      height: 20px;
+      animation: bobDown 2s ease-in-out infinite;
+    }
+
+    @keyframes bobDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* --- SECOND SECTION --- */
+    .about {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .about-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .about-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: brightness(0.4) saturate(1.2);
+    }
+
+    .about-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 10, 20, 1) 0%,
+        rgba(5, 10, 20, 0.4) 25%,
+        rgba(5, 10, 20, 0.4) 75%,
+        rgba(5, 10, 20, 1) 100%
+      );
+      z-index: 1;
+    }
+
+    .about-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 80px 24px;
+      text-align: center;
+    }
+
+    .about-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(126, 200, 227, 0.5);
+      margin-bottom: 32px;
+    }
+
+    .about-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 400;
+      line-height: 1.4;
+      margin-bottom: 28px;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .about-text {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: rgba(200, 216, 230, 0.65);
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+    }
+
+    .feature {
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      display: block;
+      opacity: 0.7;
+    }
+
+    .feature-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 0.78rem;
+      color: rgba(168, 212, 240, 0.4);
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    /* --- FOOTER --- */
+    .footer {
+      padding: 48px 24px;
+      text-align: center;
+      background: #050a14;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.3em;
+      color: rgba(168, 212, 240, 0.3);
+      margin-bottom: 16px;
+      text-indent: 0.3em;
+    }
+
+    .footer-location {
+      font-size: 0.75rem;
+      color: rgba(168, 212, 240, 0.2);
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    .footer-copy {
+      font-size: 0.7rem;
+      color: rgba(168, 212, 240, 0.15);
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 600px) {
+      .signup-form {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .signup-form input[type="email"] {
+        border-right: 1px solid rgba(126, 200, 227, 0.2);
+        border-radius: 4px 4px 0 0;
+        border-bottom: none;
+      }
+
+      .signup-form button {
+        border-radius: 0 0 4px 4px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    /* --- TOAST --- */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(126, 200, 227, 0.15);
+      border: 1px solid rgba(126, 200, 227, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 14px 28px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      opacity: 0;
+      transition: opacity 0.4s, transform 0.4s;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="IMG_1054.PNG" alt="LUMICE ice castle glowing at twilight">
+    </div>
+    <div class="hero-content">
+      <h1 class="logo">LUMICE</h1>
+      <p class="tagline">A Finnish Ice Experience</p>
+      <div class="hero-divider"></div>
+      <p class="coming-soon">Coming Soon</p>
+      <p class="season">Winter 2026&ndash;2027</p>
+      <form class="signup-form" id="signupForm">
+        <input type="email" placeholder="Enter your email" required aria-label="Email address">
+        <button type="submit">Notify Me</button>
+      </form>
+      <p class="signup-note">Be the first to know when we open</p>
+    </div>
+    <button class="scroll-cue" onclick="document.querySelector('.about').scrollIntoView({behavior:'smooth'})" aria-label="Scroll down">
+      <span>Discover</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </button>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <div class="about-bg">
+      <img src="IMG_1055.PNG" alt="Ice structures under the Northern Lights">
+    </div>
+    <div class="about-content">
+      <p class="about-label">Born from Ice &amp; Light</p>
+      <h2 class="about-heading">Where frozen architecture meets the aurora</h2>
+      <p class="about-text">
+        Deep in Finnish Lapland, LUMICE rises each winter as a cathedral of ice and light.
+        Sculptors, architects and lighting artists shape thousands of tonnes of crystal-clear
+        ice into immersive spaces that glow from within.
+      </p>
+      <p class="about-text">
+        Walk through luminous corridors, explore frozen halls, and witness the Northern Lights
+        from a place that exists for only one season.
+      </p>
+
+      <div class="features">
+        <div class="feature">
+          <span class="feature-icon" aria-hidden="true">&#10052;</span>
+          <p class="feature-title">Ice Architecture</p>
+          <p class="feature-desc">Hand-carved halls and tunnels of pure glacial ice</p>
+        </div>
+        <div class="feature">
+          <span class="feature-icon" aria-hidden="true">&#10038;</span>
+          <p class="feature-title">Northern Lights</p>
+          <p class="feature-desc">Prime aurora viewing from the Arctic Circle</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p class="footer-logo">LUMICE</p>
+    <p class="footer-location">Lapland, Finland</p>
+    <p class="footer-copy">&copy; 2026 LUMICE. All rights reserved.</p>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">Thank you! We'll be in touch.</div>
+
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const toast = document.getElementById('toast');
+      toast.classList.add('visible');
+      this.querySelector('input').value = '';
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    });
+  </script>
+
+</body>
+</html>
