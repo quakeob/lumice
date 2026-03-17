@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMICE</title>
   <meta name="description" content="LUMICE — A Finnish ice experience. Coming soon.">
+  <!-- Translations meta -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
@@ -377,6 +378,56 @@
       }
     }
 
+    /* --- LANGUAGE BAR --- */
+    .lang-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(5, 10, 20, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(126, 200, 227, 0.08);
+      gap: 4px;
+    }
+
+    .lang-bar button {
+      background: none;
+      border: 1px solid transparent;
+      color: rgba(168, 212, 240, 0.45);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    .lang-bar button:hover {
+      color: rgba(168, 212, 240, 0.8);
+      border-color: rgba(126, 200, 227, 0.2);
+    }
+
+    .lang-bar button.active {
+      color: rgba(255, 255, 255, 0.9);
+      border-color: rgba(126, 200, 227, 0.35);
+      background: rgba(126, 200, 227, 0.1);
+    }
+
+    .lang-bar .lang-sep {
+      color: rgba(126, 200, 227, 0.15);
+      font-size: 0.7rem;
+      user-select: none;
+    }
+
     /* --- TOAST --- */
     .toast {
       position: fixed;
@@ -404,6 +455,25 @@
   </style>
 </head>
 <body>
+
+  <!-- LANGUAGE BAR -->
+  <nav class="lang-bar" aria-label="Language selection">
+    <button class="active" data-lang="en">EN</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="fi">FI</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="sv">SV</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="de">DE</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="fr">FR</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="ja">日本語</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="zh">中文</button>
+    <span class="lang-sep">·</span>
+    <button data-lang="ru">RU</button>
+  </nav>
 
   <!-- HERO -->
   <section class="hero">
@@ -472,6 +542,208 @@
   <div class="toast" id="toast">Thank you! We'll be in touch.</div>
 
   <script>
+    const translations = {
+      en: {
+        tagline: 'A Finnish Ice Experience',
+        coming: 'Coming Soon',
+        season: 'Winter 2026–2027',
+        placeholder: 'Enter your email',
+        notify: 'Notify Me',
+        signupNote: 'Be the first to know when we open',
+        discover: 'Discover',
+        label: 'Born from Ice & Light',
+        heading: 'Where frozen architecture meets the aurora',
+        text1: 'Deep in Finnish Lapland, LUMICE rises each winter as a cathedral of ice and light. Sculptors, architects and lighting artists shape thousands of tonnes of crystal-clear ice into immersive spaces that glow from within.',
+        text2: 'Walk through luminous corridors, explore frozen halls, and witness the Northern Lights from a place that exists for only one season.',
+        feat1Title: 'Ice Architecture',
+        feat1Desc: 'Hand-carved halls and tunnels of pure glacial ice',
+        feat2Title: 'Northern Lights',
+        feat2Desc: 'Prime aurora viewing from the Arctic Circle',
+        location: 'Lapland, Finland',
+        toast: 'Thank you! We\'ll be in touch.'
+      },
+      fi: {
+        tagline: 'Suomalainen jääelämys',
+        coming: 'Tulossa pian',
+        season: 'Talvi 2026–2027',
+        placeholder: 'Sähköpostiosoitteesi',
+        notify: 'Ilmoita minulle',
+        signupNote: 'Ole ensimmäinen, joka saa tiedon avajaistamme',
+        discover: 'Tutustu',
+        label: 'Syntynyt jäästä ja valosta',
+        heading: 'Missä jäinen arkkitehtuuri kohtaa revontulet',
+        text1: 'Syvällä Suomen Lapissa LUMICE nousee joka talvi jään ja valon katedraaliksi. Kuvanveistäjät, arkkitehdit ja valotaiteilijat muovaavat tuhansia tonneja kirkasta jäätä elämyksellisiksi tiloiksi, jotka hehkuvat sisältäpäin.',
+        text2: 'Kulje valaistujen käytävien läpi, tutki jäisiä saleja ja koe revontulet paikasta, joka on olemassa vain yhden kauden.',
+        feat1Title: 'Jääarkkitehtuuri',
+        feat1Desc: 'Käsin veistetyt salit ja tunnelit puhtaasta jäästä',
+        feat2Title: 'Revontulet',
+        feat2Desc: 'Ainutlaatuinen revontulien katselupaikka napapiirillä',
+        location: 'Lappi, Suomi',
+        toast: 'Kiitos! Otamme sinuun yhteyttä.'
+      },
+      sv: {
+        tagline: 'En finsk isupplevelse',
+        coming: 'Kommer snart',
+        season: 'Vinter 2026–2027',
+        placeholder: 'Din e-postadress',
+        notify: 'Meddela mig',
+        signupNote: 'Bli först att veta när vi öppnar',
+        discover: 'Utforska',
+        label: 'Född ur is och ljus',
+        heading: 'Där frusen arkitektur möter norrskenet',
+        text1: 'Djupt i finska Lappland reser sig LUMICE varje vinter som en katedral av is och ljus. Skulptörer, arkitekter och ljuskonstnärer formar tusentals ton kristallklar is till uppslukande rum som lyser inifrån.',
+        text2: 'Vandra genom lysande korridorer, utforska frusna salar och upplev norrskenet från en plats som bara existerar en säsong.',
+        feat1Title: 'Isarkitektur',
+        feat1Desc: 'Handhuggna salar och tunnlar av ren glaciäris',
+        feat2Title: 'Norrsken',
+        feat2Desc: 'Förstklassig norrskensskådning vid polcirkeln',
+        location: 'Lappland, Finland',
+        toast: 'Tack! Vi hör av oss.'
+      },
+      de: {
+        tagline: 'Ein finnisches Eis-Erlebnis',
+        coming: 'Demnächst',
+        season: 'Winter 2026–2027',
+        placeholder: 'Ihre E-Mail-Adresse',
+        notify: 'Benachrichtigen',
+        signupNote: 'Erfahren Sie als Erstes, wenn wir öffnen',
+        discover: 'Entdecken',
+        label: 'Aus Eis und Licht geboren',
+        heading: 'Wo gefrorene Architektur auf Nordlichter trifft',
+        text1: 'Tief im finnischen Lappland erhebt sich LUMICE jeden Winter als Kathedrale aus Eis und Licht. Bildhauer, Architekten und Lichtkünstler formen tausende Tonnen kristallklares Eis zu immersiven Räumen, die von innen leuchten.',
+        text2: 'Wandeln Sie durch leuchtende Korridore, erkunden Sie gefrorene Hallen und erleben Sie die Nordlichter an einem Ort, der nur eine Saison lang existiert.',
+        feat1Title: 'Eis-Architektur',
+        feat1Desc: 'Handgeschnitzte Hallen und Tunnel aus reinem Gletschereis',
+        feat2Title: 'Nordlichter',
+        feat2Desc: 'Erstklassige Polarlichter am Polarkreis',
+        location: 'Lappland, Finnland',
+        toast: 'Vielen Dank! Wir melden uns bei Ihnen.'
+      },
+      fr: {
+        tagline: 'Une expérience glacée finlandaise',
+        coming: 'Bientôt disponible',
+        season: 'Hiver 2026–2027',
+        placeholder: 'Votre adresse e-mail',
+        notify: 'Me prévenir',
+        signupNote: 'Soyez le premier informé de notre ouverture',
+        discover: 'Découvrir',
+        label: 'Né de la glace et de la lumière',
+        heading: 'Là où l\'architecture gelée rencontre les aurores boréales',
+        text1: 'Au cœur de la Laponie finlandaise, LUMICE s\'élève chaque hiver telle une cathédrale de glace et de lumière. Sculpteurs, architectes et artistes lumière façonnent des milliers de tonnes de glace cristalline en espaces immersifs irradiant de l\'intérieur.',
+        text2: 'Parcourez des couloirs lumineux, explorez des salles gelées et contemplez les aurores boréales depuis un lieu qui n\'existe que le temps d\'une saison.',
+        feat1Title: 'Architecture de glace',
+        feat1Desc: 'Salles et tunnels sculptés à la main dans la glace pure',
+        feat2Title: 'Aurores boréales',
+        feat2Desc: 'Observation privilégiée depuis le cercle polaire',
+        location: 'Laponie, Finlande',
+        toast: 'Merci ! Nous vous contacterons.'
+      },
+      ja: {
+        tagline: 'フィンランドの氷の体験',
+        coming: '近日公開',
+        season: '2026–2027年冬',
+        placeholder: 'メールアドレスを入力',
+        notify: '通知を受け取る',
+        signupNote: 'オープン時にいち早くお知らせします',
+        discover: '詳しく見る',
+        label: '氷と光から生まれた',
+        heading: '凍った建築とオーロラが出会う場所',
+        text1: 'フィンランド・ラップランドの奥深くで、LUMICEは毎冬、氷と光の大聖堂として姿を現します。彫刻家、建築家、照明アーティストが数千トンの透明な氷を、内側から輝く没入空間へと形作ります。',
+        text2: '光に満ちた回廊を歩き、凍てついたホールを探検し、ひとつの季節だけ存在する場所からオーロラを眺めてください。',
+        feat1Title: '氷の建築',
+        feat1Desc: '純粋な氷河の氷から手彫りされたホールとトンネル',
+        feat2Title: 'オーロラ',
+        feat2Desc: '北極圏からの最高のオーロラ観賞',
+        location: 'ラップランド、フィンランド',
+        toast: 'ありがとうございます！ご連絡いたします。'
+      },
+      zh: {
+        tagline: '芬兰冰雪体验',
+        coming: '即将开放',
+        season: '2026–2027年冬季',
+        placeholder: '请输入电子邮箱',
+        notify: '通知我',
+        signupNote: '第一时间获取开放通知',
+        discover: '探索',
+        label: '诞生于冰与光',
+        heading: '冰冻建筑与极光交汇之处',
+        text1: '在芬兰拉普兰的深处，LUMICE每个冬天都会化身为一座冰与光的大教堂。雕塑家、建筑师和灯光艺术家将数千吨晶莹剔透的冰块塑造成从内部发光的沉浸式空间。',
+        text2: '穿行于光芒四射的走廊，探索冰封的大厅，在这个仅存在一季的地方见证北极光。',
+        feat1Title: '冰雪建筑',
+        feat1Desc: '由纯净冰川冰手工雕刻的大厅与隧道',
+        feat2Title: '北极光',
+        feat2Desc: '北极圈内的极光最佳观赏地',
+        location: '拉普兰，芬兰',
+        toast: '谢谢！我们会与您联系。'
+      },
+      ru: {
+        tagline: 'Финский ледяной опыт',
+        coming: 'Скоро открытие',
+        season: 'Зима 2026–2027',
+        placeholder: 'Ваш email',
+        notify: 'Уведомить',
+        signupNote: 'Узнайте первыми о нашем открытии',
+        discover: 'Узнать больше',
+        label: 'Рождённый изо льда и света',
+        heading: 'Где ледяная архитектура встречает северное сияние',
+        text1: 'В самом сердце финской Лапландии LUMICE каждую зиму возрождается как собор изо льда и света. Скульпторы, архитекторы и художники по свету превращают тысячи тонн кристально чистого льда в иммерсивные пространства, светящиеся изнутри.',
+        text2: 'Пройдите через светящиеся коридоры, исследуйте ледяные залы и наблюдайте северное сияние из места, которое существует лишь один сезон.',
+        feat1Title: 'Ледяная архитектура',
+        feat1Desc: 'Вручную вырезанные залы и тоннели из чистого ледникового льда',
+        feat2Title: 'Северное сияние',
+        feat2Desc: 'Лучшие виды на полярное сияние за полярным кругом',
+        location: 'Лапландия, Финляндия',
+        toast: 'Спасибо! Мы свяжемся с вами.'
+      }
+    };
+
+    function setLang(lang) {
+      const t = translations[lang] || translations.en;
+      document.documentElement.lang = lang;
+
+      // Update text content
+      document.querySelector('.tagline').textContent = t.tagline;
+      document.querySelector('.coming-soon').textContent = t.coming;
+      document.querySelector('.season').textContent = t.season;
+      document.querySelector('.signup-form input').placeholder = t.placeholder;
+      document.querySelector('.signup-form button').textContent = t.notify;
+      document.querySelector('.signup-note').textContent = t.signupNote;
+      document.querySelector('.scroll-cue span').textContent = t.discover;
+      document.querySelector('.about-label').textContent = t.label;
+      document.querySelector('.about-heading').textContent = t.heading;
+      document.querySelectorAll('.about-text')[0].textContent = t.text1;
+      document.querySelectorAll('.about-text')[1].textContent = t.text2;
+      const features = document.querySelectorAll('.feature');
+      features[0].querySelector('.feature-title').textContent = t.feat1Title;
+      features[0].querySelector('.feature-desc').textContent = t.feat1Desc;
+      features[1].querySelector('.feature-title').textContent = t.feat2Title;
+      features[1].querySelector('.feature-desc').textContent = t.feat2Desc;
+      document.querySelector('.footer-location').textContent = t.location;
+      document.getElementById('toast').textContent = t.toast;
+
+      // Update active button
+      document.querySelectorAll('.lang-bar button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      // Save preference
+      try { localStorage.setItem('lumice-lang', lang); } catch(e) {}
+    }
+
+    // Language bar click handlers
+    document.querySelectorAll('.lang-bar button').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
+    });
+
+    // Restore saved language or detect from browser
+    (function() {
+      const saved = localStorage.getItem('lumice-lang');
+      if (saved && translations[saved]) { setLang(saved); return; }
+      const browserLang = (navigator.language || '').slice(0, 2).toLowerCase();
+      if (translations[browserLang]) { setLang(browserLang); }
+    })();
+
+    // Signup form
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const toast = document.getElementById('toast');
