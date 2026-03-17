@@ -51,60 +51,106 @@
       100% { transform: translate(2%, -2%) rotate(1deg) scale(1.02); }
     }
 
-    /* === LANGUAGE BAR === */
-    .lang-bar {
+    /* === LANGUAGE DROPDOWN === */
+    .lang-dropdown {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 16px;
+      right: 24px;
       z-index: 200;
+    }
+
+    .lang-toggle {
       display: flex;
-      justify-content: flex-end;
       align-items: center;
-      padding: 10px 28px;
+      gap: 6px;
+      padding: 7px 14px;
       background: rgba(3, 8, 16, 0.5);
       backdrop-filter: blur(20px) saturate(1.4);
       -webkit-backdrop-filter: blur(20px) saturate(1.4);
-      border-bottom: 1px solid rgba(126, 200, 227, 0.06);
-      gap: 2px;
-      transition: background 0.4s;
-    }
-
-    .lang-bar.scrolled {
-      background: rgba(3, 8, 16, 0.85);
-    }
-
-    .lang-bar button {
-      background: none;
-      border: 1px solid transparent;
-      color: rgba(168, 212, 240, 0.4);
+      border: 1px solid rgba(126, 200, 227, 0.1);
+      border-radius: 6px;
+      color: rgba(200, 220, 240, 0.8);
       font-family: 'Inter', sans-serif;
-      font-size: 0.68rem;
-      letter-spacing: 0.06em;
-      padding: 4px 9px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-    }
-
-    .lang-bar button:hover {
-      color: rgba(168, 212, 240, 0.85);
-      border-color: rgba(126, 200, 227, 0.2);
-      text-shadow: 0 0 12px rgba(126, 200, 227, 0.3);
-    }
-
-    .lang-bar button.active {
-      color: #fff;
-      border-color: rgba(126, 200, 227, 0.4);
-      background: rgba(126, 200, 227, 0.12);
-      box-shadow: 0 0 12px rgba(126, 200, 227, 0.1);
-    }
-
-    .lang-bar .lang-sep {
-      color: rgba(126, 200, 227, 0.1);
-      font-size: 0.6rem;
+      cursor: pointer;
+      transition: all 0.3s;
       user-select: none;
+    }
+
+    .lang-toggle:hover {
+      border-color: rgba(126, 200, 227, 0.25);
+      background: rgba(3, 8, 16, 0.7);
+    }
+
+    .lang-toggle svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5;
+      transition: transform 0.3s;
+    }
+
+    .lang-dropdown.open .lang-toggle svg {
+      transform: rotate(180deg);
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 140px;
+      background: rgba(8, 14, 28, 0.92);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid rgba(126, 200, 227, 0.1);
+      border-radius: 8px;
+      padding: 6px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px) scale(0.97);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .lang-dropdown.open .lang-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    .lang-menu button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      border-radius: 5px;
+      color: rgba(168, 212, 240, 0.55);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .lang-menu button:hover {
+      background: rgba(126, 200, 227, 0.08);
+      color: rgba(200, 220, 240, 0.9);
+    }
+
+    .lang-menu button.active {
+      color: #fff;
+      background: rgba(126, 200, 227, 0.12);
+    }
+
+    .lang-menu button .lang-native {
+      margin-left: auto;
+      font-size: 0.65rem;
+      opacity: 0.4;
     }
 
     /* === HERO === */
@@ -742,24 +788,24 @@
   <!-- SNOWFALL -->
   <canvas id="snowCanvas"></canvas>
 
-  <!-- LANGUAGE BAR -->
-  <nav class="lang-bar" aria-label="Language selection">
-    <button class="active" data-lang="en">EN</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="fi">FI</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="sv">SV</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="de">DE</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="fr">FR</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="ja">日本語</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="zh">中文</button>
-    <span class="lang-sep">·</span>
-    <button data-lang="ru">RU</button>
-  </nav>
+  <!-- LANGUAGE DROPDOWN -->
+  <div class="lang-dropdown" id="langDropdown">
+    <button class="lang-toggle" id="langToggle" aria-haspopup="true" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+      <span id="langCurrent">EN</span>
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5l3 3 3-3"/></svg>
+    </button>
+    <div class="lang-menu" role="menu">
+      <button data-lang="en" class="active" role="menuitem">English <span class="lang-native">EN</span></button>
+      <button data-lang="fi" role="menuitem">Suomi <span class="lang-native">FI</span></button>
+      <button data-lang="sv" role="menuitem">Svenska <span class="lang-native">SV</span></button>
+      <button data-lang="de" role="menuitem">Deutsch <span class="lang-native">DE</span></button>
+      <button data-lang="fr" role="menuitem">Français <span class="lang-native">FR</span></button>
+      <button data-lang="ja" role="menuitem">日本語 <span class="lang-native">JA</span></button>
+      <button data-lang="zh" role="menuitem">中文 <span class="lang-native">ZH</span></button>
+      <button data-lang="ru" role="menuitem">Русский <span class="lang-native">RU</span></button>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section class="hero" id="hero">
@@ -871,12 +917,15 @@
   <div class="toast" id="toast">Thank you! We'll be in touch.</div>
 
   <script>
-    /* === SNOWFALL PARTICLE SYSTEM === */
+    /* === SNOWFALL PARTICLE SYSTEM WITH CURSOR INTERACTION === */
     (function() {
       const canvas = document.getElementById('snowCanvas');
       const ctx = canvas.getContext('2d');
       let particles = [];
-      const COUNT = 80;
+      const COUNT = 100;
+      const CURSOR_RADIUS = 120;
+      const CURSOR_FORCE = 1.8;
+      let mouse = { x: -1000, y: -1000, active: false };
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -885,32 +934,80 @@
       resize();
       window.addEventListener('resize', resize);
 
+      // Track cursor
+      document.addEventListener('mousemove', e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        mouse.active = true;
+      });
+      document.addEventListener('mouseleave', () => { mouse.active = false; });
+
       for (let i = 0; i < COUNT; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           r: Math.random() * 2.5 + 0.5,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: Math.random() * 0.6 + 0.2,
-          opacity: Math.random() * 0.5 + 0.1,
-          flicker: Math.random() * Math.PI * 2
+          baseVx: (Math.random() - 0.5) * 0.3,
+          baseVy: Math.random() * 0.6 + 0.2,
+          vx: 0, vy: 0,
+          opacity: Math.random() * 0.5 + 0.15,
+          flicker: Math.random() * Math.PI * 2,
+          turbulence: Math.random() * 0.3
         });
       }
 
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw cursor glow when active
+        if (mouse.active) {
+          const grd = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, CURSOR_RADIUS);
+          grd.addColorStop(0, 'rgba(126, 200, 227, 0.04)');
+          grd.addColorStop(1, 'rgba(126, 200, 227, 0)');
+          ctx.fillStyle = grd;
+          ctx.fillRect(mouse.x - CURSOR_RADIUS, mouse.y - CURSOR_RADIUS, CURSOR_RADIUS * 2, CURSOR_RADIUS * 2);
+        }
+
         particles.forEach(p => {
-          p.flicker += 0.01;
-          const o = p.opacity * (0.7 + 0.3 * Math.sin(p.flicker));
+          p.flicker += 0.012 + p.turbulence * 0.005;
+          const o = p.opacity * (0.65 + 0.35 * Math.sin(p.flicker));
+
+          // Cursor repulsion
+          if (mouse.active) {
+            const dx = p.x - mouse.x;
+            const dy = p.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < CURSOR_RADIUS && dist > 0) {
+              const force = (1 - dist / CURSOR_RADIUS) * CURSOR_FORCE;
+              const angle = Math.atan2(dy, dx);
+              p.vx += Math.cos(angle) * force;
+              p.vy += Math.sin(angle) * force;
+              // Boost opacity near cursor
+              const boost = (1 - dist / CURSOR_RADIUS) * 0.3;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(126, 200, 227, ${boost * 0.15})`;
+              ctx.fill();
+            }
+          }
+
+          // Apply velocity with damping
+          p.vx = p.vx * 0.96 + p.baseVx * 0.04;
+          p.vy = p.vy * 0.96 + p.baseVy * 0.04;
+
+          // Wind sway
+          p.vx += Math.sin(p.flicker * 0.5) * 0.02;
+
+          // Draw snowflake
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(200, 220, 240, ${o})`;
+          ctx.fillStyle = `rgba(210, 225, 245, ${o})`;
           ctx.fill();
 
-          // subtle glow
+          // Glow
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(126, 200, 227, ${o * 0.1})`;
+          ctx.fillStyle = `rgba(126, 200, 227, ${o * 0.08})`;
           ctx.fill();
 
           p.x += p.vx;
@@ -932,8 +1029,6 @@
       if (y < window.innerHeight * 1.2) {
         heroBg.style.transform = `translateY(${y * 0.35}px)`;
       }
-      // Lang bar bg on scroll
-      document.querySelector('.lang-bar').classList.toggle('scrolled', y > 80);
     }, { passive: true });
 
     /* === SCROLL REVEAL === */
@@ -1134,9 +1229,41 @@
       try { localStorage.setItem('lumice-lang', lang); } catch(e) {}
     }
 
-    document.querySelectorAll('.lang-bar button').forEach(btn => {
-      btn.addEventListener('click', () => setLang(btn.dataset.lang));
+    /* === LANGUAGE DROPDOWN LOGIC === */
+    const langDropdown = document.getElementById('langDropdown');
+    const langToggle = document.getElementById('langToggle');
+    const langCurrent = document.getElementById('langCurrent');
+    const langNames = { en:'EN', fi:'FI', sv:'SV', de:'DE', fr:'FR', ja:'JA', zh:'ZH', ru:'RU' };
+
+    langToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langDropdown.classList.toggle('open');
+      langToggle.setAttribute('aria-expanded', langDropdown.classList.contains('open'));
     });
+
+    document.addEventListener('click', () => {
+      langDropdown.classList.remove('open');
+      langToggle.setAttribute('aria-expanded', 'false');
+    });
+
+    document.querySelectorAll('.lang-menu button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setLang(btn.dataset.lang);
+        langDropdown.classList.remove('open');
+        langToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Override setLang to also update dropdown
+    const _origSetLang = setLang;
+    setLang = function(lang) {
+      _origSetLang(lang);
+      langCurrent.textContent = langNames[lang] || lang.toUpperCase();
+      document.querySelectorAll('.lang-menu button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+    };
 
     (function() {
       const saved = localStorage.getItem('lumice-lang');
