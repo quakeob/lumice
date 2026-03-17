@@ -5,33 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LUMICE</title>
   <meta name="description" content="LUMICE — A Finnish ice experience. Coming soon.">
-  <!-- Translations meta -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #050a14;
+      background: #030810;
       color: #e0e8f0;
       overflow-x: hidden;
     }
 
-    /* --- HERO --- */
+    /* === SNOWFALL CANVAS === */
+    #snowCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* === AURORA OVERLAY === */
+    .aurora {
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.12;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(72, 209, 204, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 50%, rgba(100, 149, 237, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 30%, rgba(138, 43, 226, 0.2) 0%, transparent 50%);
+      animation: auroraShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes auroraShift {
+      0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+      33%  { transform: translate(5%, -3%) rotate(2deg) scale(1.05); }
+      66%  { transform: translate(-3%, 5%) rotate(-1deg) scale(0.98); }
+      100% { transform: translate(2%, -2%) rotate(1deg) scale(1.02); }
+    }
+
+    /* === LANGUAGE BAR === */
+    .lang-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 10px 28px;
+      background: rgba(3, 8, 16, 0.5);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid rgba(126, 200, 227, 0.06);
+      gap: 2px;
+      transition: background 0.4s;
+    }
+
+    .lang-bar.scrolled {
+      background: rgba(3, 8, 16, 0.85);
+    }
+
+    .lang-bar button {
+      background: none;
+      border: 1px solid transparent;
+      color: rgba(168, 212, 240, 0.4);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      padding: 4px 9px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+    }
+
+    .lang-bar button:hover {
+      color: rgba(168, 212, 240, 0.85);
+      border-color: rgba(126, 200, 227, 0.2);
+      text-shadow: 0 0 12px rgba(126, 200, 227, 0.3);
+    }
+
+    .lang-bar button.active {
+      color: #fff;
+      border-color: rgba(126, 200, 227, 0.4);
+      background: rgba(126, 200, 227, 0.12);
+      box-shadow: 0 0 12px rgba(126, 200, 227, 0.1);
+    }
+
+    .lang-bar .lang-sep {
+      color: rgba(126, 200, 227, 0.1);
+      font-size: 0.6rem;
+      user-select: none;
+    }
+
+    /* === HERO === */
     .hero {
       position: relative;
       height: 100vh;
-      min-height: 600px;
+      min-height: 700px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -44,187 +124,276 @@
       position: absolute;
       inset: 0;
       z-index: 0;
+      will-change: transform;
     }
 
     .hero-bg img {
       width: 100%;
-      height: 100%;
+      height: 120%;
       object-fit: cover;
       object-position: center 40%;
-      filter: brightness(0.55) saturate(1.1);
+      filter: brightness(0.5) saturate(1.2) contrast(1.05);
+      transform: translateY(0);
+      transition: filter 1s;
     }
 
     .hero-bg::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(5, 10, 20, 0.3) 0%,
-        rgba(5, 10, 20, 0.1) 40%,
-        rgba(5, 10, 20, 0.5) 75%,
-        rgba(5, 10, 20, 1) 100%
-      );
+      background:
+        radial-gradient(ellipse at center 30%, transparent 0%, rgba(3, 8, 16, 0.3) 50%),
+        linear-gradient(to bottom,
+          rgba(3, 8, 16, 0.2) 0%,
+          rgba(3, 8, 16, 0.05) 30%,
+          rgba(3, 8, 16, 0.15) 60%,
+          rgba(3, 8, 16, 0.7) 85%,
+          rgba(3, 8, 16, 1) 100%
+        );
     }
 
     .hero-content {
       position: relative;
-      z-index: 1;
+      z-index: 5;
       padding: 0 24px;
-      max-width: 720px;
+      max-width: 760px;
     }
 
+    /* Logo with shimmer */
     .logo {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(3.5rem, 10vw, 7rem);
+      font-size: clamp(3.5rem, 10vw, 8rem);
       font-weight: 400;
-      letter-spacing: 0.35em;
+      letter-spacing: 0.4em;
       margin-bottom: 8px;
-      background: linear-gradient(135deg, #ffffff 0%, #a8d4f0 50%, #7ec8e3 100%);
+      text-indent: 0.4em;
+      position: relative;
+      background: linear-gradient(
+        120deg,
+        rgba(255,255,255,0.85) 0%,
+        rgba(168,212,240,1) 25%,
+        rgba(255,255,255,0.95) 50%,
+        rgba(126,200,227,1) 75%,
+        rgba(255,255,255,0.85) 100%
+      );
+      background-size: 200% 100%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-indent: 0.35em;
+      animation: logoShimmer 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 40px rgba(126, 200, 227, 0.15));
+    }
+
+    @keyframes logoShimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .tagline {
       font-size: clamp(0.75rem, 2vw, 1rem);
-      letter-spacing: 0.45em;
+      letter-spacing: 0.5em;
       text-transform: uppercase;
-      color: rgba(168, 212, 240, 0.7);
-      margin-bottom: 48px;
+      color: rgba(168, 212, 240, 0.6);
+      margin-bottom: 56px;
       font-weight: 300;
-      text-indent: 0.45em;
+      text-indent: 0.5em;
+      animation: fadeInUp 1.2s 0.3s both;
     }
 
     .hero-divider {
-      width: 48px;
+      width: 60px;
+      height: 1px;
+      margin: 0 auto 48px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .hero-divider::before {
+      content: '';
+      position: absolute;
+      width: 100%;
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(126, 200, 227, 0.5), transparent);
-      margin: 0 auto 48px;
+    }
+
+    .hero-divider::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(126, 200, 227, 0.6);
+      top: -2.5px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 12px rgba(126, 200, 227, 0.4);
+      animation: dividerPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes dividerPulse {
+      0%, 100% { opacity: 0.4; box-shadow: 0 0 8px rgba(126, 200, 227, 0.2); }
+      50% { opacity: 1; box-shadow: 0 0 20px rgba(126, 200, 227, 0.6); }
     }
 
     .coming-soon {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-size: clamp(1.1rem, 3vw, 1.6rem);
       font-weight: 400;
-      color: rgba(255, 255, 255, 0.9);
-      margin-bottom: 12px;
+      color: rgba(255, 255, 255, 0.92);
+      margin-bottom: 10px;
+      animation: fadeInUp 1.2s 0.5s both;
     }
 
     .season {
-      font-size: 0.85rem;
-      color: rgba(168, 212, 240, 0.5);
-      letter-spacing: 0.2em;
+      font-size: 0.82rem;
+      color: rgba(168, 212, 240, 0.45);
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      margin-bottom: 56px;
+      margin-bottom: 52px;
       font-weight: 300;
+      animation: fadeInUp 1.2s 0.7s both;
     }
 
-    /* --- EMAIL SIGNUP --- */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === EMAIL SIGNUP (Glassmorphism) === */
+    .signup-wrapper {
+      animation: fadeInUp 1.2s 0.9s both;
+    }
+
     .signup-form {
       display: flex;
       gap: 0;
-      max-width: 440px;
+      max-width: 460px;
       width: 100%;
       margin: 0 auto;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(126, 200, 227, 0.12);
     }
 
     .signup-form input[type="email"] {
       flex: 1;
-      padding: 14px 20px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(126, 200, 227, 0.2);
-      border-right: none;
-      border-radius: 4px 0 0 4px;
+      padding: 16px 22px;
+      background: rgba(255, 255, 255, 0.06);
+      border: none;
       color: #e0e8f0;
       font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       outline: none;
-      transition: border-color 0.3s, background 0.3s;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      transition: background 0.3s;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .signup-form input[type="email"]::placeholder {
-      color: rgba(168, 212, 240, 0.4);
+      color: rgba(168, 212, 240, 0.35);
     }
 
     .signup-form input[type="email"]:focus {
-      border-color: rgba(126, 200, 227, 0.5);
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .signup-form button {
-      padding: 14px 28px;
-      background: rgba(126, 200, 227, 0.15);
-      border: 1px solid rgba(126, 200, 227, 0.2);
-      border-radius: 0 4px 4px 0;
-      color: rgba(168, 212, 240, 0.9);
+      padding: 16px 32px;
+      background: rgba(126, 200, 227, 0.18);
+      border: none;
+      border-left: 1px solid rgba(126, 200, 227, 0.1);
+      color: rgba(200, 230, 250, 0.95);
       font-family: 'Inter', sans-serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.15em;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.3s;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .signup-form button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(126, 200, 227, 0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
     .signup-form button:hover {
-      background: rgba(126, 200, 227, 0.25);
-      border-color: rgba(126, 200, 227, 0.4);
+      background: rgba(126, 200, 227, 0.3);
       color: #fff;
+      box-shadow: 0 0 24px rgba(126, 200, 227, 0.15);
+    }
+
+    .signup-form button:hover::before {
+      opacity: 1;
     }
 
     .signup-note {
-      font-size: 0.72rem;
-      color: rgba(168, 212, 240, 0.3);
-      margin-top: 14px;
-      letter-spacing: 0.03em;
+      font-size: 0.7rem;
+      color: rgba(168, 212, 240, 0.25);
+      margin-top: 16px;
+      letter-spacing: 0.04em;
     }
 
-    /* --- SCROLL CUE --- */
+    /* === SCROLL CUE === */
     .scroll-cue {
       position: absolute;
-      bottom: 36px;
+      bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 1;
+      z-index: 5;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      opacity: 0.4;
-      transition: opacity 0.3s;
+      gap: 10px;
+      opacity: 0.35;
+      transition: opacity 0.4s;
       cursor: pointer;
       background: none;
       border: none;
       color: rgba(168, 212, 240, 0.6);
     }
 
-    .scroll-cue:hover {
-      opacity: 0.7;
-    }
+    .scroll-cue:hover { opacity: 0.8; }
 
     .scroll-cue span {
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
       text-transform: uppercase;
     }
 
-    .scroll-cue svg {
-      width: 20px;
-      height: 20px;
-      animation: bobDown 2s ease-in-out infinite;
+    .scroll-cue .cue-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(126, 200, 227, 0.4), transparent);
+      position: relative;
+      overflow: hidden;
     }
 
-    @keyframes bobDown {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
+    .scroll-cue .cue-line::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: rgba(126, 200, 227, 0.8);
+      animation: scrollDrop 2.5s ease-in-out infinite;
     }
 
-    /* --- SECOND SECTION --- */
+    @keyframes scrollDrop {
+      0%   { top: -50%; opacity: 0; }
+      30%  { opacity: 1; }
+      100% { top: 110%; opacity: 0; }
+    }
+
+    /* === ABOUT SECTION === */
     .about {
       position: relative;
       min-height: 100vh;
@@ -244,7 +413,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      filter: brightness(0.4) saturate(1.2);
+      filter: brightness(0.35) saturate(1.3) contrast(1.05);
     }
 
     .about-bg::before {
@@ -253,10 +422,10 @@
       inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(5, 10, 20, 1) 0%,
-        rgba(5, 10, 20, 0.4) 25%,
-        rgba(5, 10, 20, 0.4) 75%,
-        rgba(5, 10, 20, 1) 100%
+        rgba(3, 8, 16, 1) 0%,
+        rgba(3, 8, 16, 0.3) 20%,
+        rgba(3, 8, 16, 0.3) 80%,
+        rgba(3, 8, 16, 1) 100%
       );
       z-index: 1;
     }
@@ -264,197 +433,314 @@
     .about-content {
       position: relative;
       z-index: 2;
-      max-width: 600px;
+      max-width: 680px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 120px 24px;
       text-align: center;
     }
 
     .about-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.4em;
+      font-size: 0.68rem;
+      letter-spacing: 0.45em;
       text-transform: uppercase;
-      color: rgba(126, 200, 227, 0.5);
-      margin-bottom: 32px;
+      color: rgba(126, 200, 227, 0.45);
+      margin-bottom: 36px;
     }
 
     .about-heading {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
       font-weight: 400;
-      line-height: 1.4;
-      margin-bottom: 28px;
-      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.35;
+      margin-bottom: 32px;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 0 60px rgba(126, 200, 227, 0.08);
     }
 
     .about-text {
-      font-size: 0.95rem;
-      line-height: 1.8;
-      color: rgba(200, 216, 230, 0.65);
+      font-size: 0.92rem;
+      line-height: 1.85;
+      color: rgba(200, 216, 230, 0.6);
       font-weight: 300;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
+    /* === FEATURES GRID === */
     .features {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 32px;
-      margin-top: 56px;
+      gap: 24px;
+      margin-top: 64px;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .feature {
       text-align: center;
+      padding: 32px 20px;
+      border-radius: 12px;
+      background: rgba(126, 200, 227, 0.04);
+      border: 1px solid rgba(126, 200, 227, 0.06);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
 
+    .feature::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(126, 200, 227, 0.08), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .feature:hover {
+      border-color: rgba(126, 200, 227, 0.15);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3), 0 0 24px rgba(126, 200, 227, 0.05);
+    }
+
+    .feature:hover::before { opacity: 1; }
+
     .feature-icon {
-      font-size: 1.6rem;
-      margin-bottom: 14px;
+      font-size: 2rem;
+      margin-bottom: 16px;
       display: block;
-      opacity: 0.7;
+      opacity: 0.6;
+      transition: opacity 0.4s, transform 0.4s;
+      filter: drop-shadow(0 0 8px rgba(126, 200, 227, 0.3));
+    }
+
+    .feature:hover .feature-icon {
+      opacity: 0.9;
+      transform: scale(1.15);
     }
 
     .feature-title {
       font-family: 'Playfair Display', serif;
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.85);
-      margin-bottom: 8px;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.88);
+      margin-bottom: 10px;
     }
 
     .feature-desc {
-      font-size: 0.78rem;
-      color: rgba(168, 212, 240, 0.4);
-      line-height: 1.5;
+      font-size: 0.76rem;
+      color: rgba(168, 212, 240, 0.38);
+      line-height: 1.55;
       font-weight: 300;
     }
 
-    /* --- FOOTER --- */
-    .footer {
-      padding: 48px 24px;
+    /* === STATS SECTION === */
+    .stats {
+      position: relative;
+      z-index: 2;
+      padding: 80px 24px;
+      background: #030810;
+    }
+
+    .stats-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
       text-align: center;
-      background: #050a14;
+    }
+
+    .stat {
+      padding: 24px;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 400;
+      background: linear-gradient(135deg, #fff, rgba(126, 200, 227, 0.9));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(168, 212, 240, 0.3);
+      font-weight: 300;
+    }
+
+    /* === GALLERY TEASER === */
+    .gallery-teaser {
+      position: relative;
+      z-index: 2;
+      padding: 60px 24px 100px;
+      background: #030810;
+      text-align: center;
+    }
+
+    .gallery-teaser .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: rgba(126, 200, 227, 0.35);
+      margin-bottom: 48px;
+    }
+
+    .gallery-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      flex: 1;
+      max-width: 420px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6) saturate(1.1);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(3, 8, 16, 0.7) 0%, transparent 50%);
+      transition: opacity 0.5s;
+    }
+
+    .gallery-item:hover img {
+      filter: brightness(0.75) saturate(1.3);
+      transform: scale(1.05);
+    }
+
+    .gallery-item:hover::after { opacity: 0.5; }
+
+    /* === FOOTER === */
+    .footer {
+      position: relative;
+      z-index: 2;
+      padding: 56px 24px 48px;
+      text-align: center;
+      background: #030810;
+      border-top: 1px solid rgba(126, 200, 227, 0.04);
     }
 
     .footer-logo {
       font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      letter-spacing: 0.3em;
-      color: rgba(168, 212, 240, 0.3);
+      font-size: 1.3rem;
+      letter-spacing: 0.35em;
+      text-indent: 0.35em;
       margin-bottom: 16px;
-      text-indent: 0.3em;
+      background: linear-gradient(135deg, rgba(168, 212, 240, 0.4), rgba(126, 200, 227, 0.25));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .footer-location {
-      font-size: 0.75rem;
-      color: rgba(168, 212, 240, 0.2);
-      letter-spacing: 0.15em;
+      font-size: 0.72rem;
+      color: rgba(168, 212, 240, 0.18);
+      letter-spacing: 0.18em;
       margin-bottom: 8px;
     }
 
     .footer-copy {
-      font-size: 0.7rem;
-      color: rgba(168, 212, 240, 0.15);
+      font-size: 0.65rem;
+      color: rgba(168, 212, 240, 0.1);
     }
 
-    /* --- RESPONSIVE --- */
-    @media (max-width: 600px) {
-      .signup-form {
-        flex-direction: column;
-        gap: 0;
-      }
-
-      .signup-form input[type="email"] {
-        border-right: 1px solid rgba(126, 200, 227, 0.2);
-        border-radius: 4px 4px 0 0;
-        border-bottom: none;
-      }
-
-      .signup-form button {
-        border-radius: 0 0 4px 4px;
-      }
-
-      .features {
-        grid-template-columns: 1fr;
-        gap: 40px;
-      }
-    }
-
-    /* --- LANGUAGE BAR --- */
-    .lang-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 12px 24px;
-      background: rgba(5, 10, 20, 0.6);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(126, 200, 227, 0.08);
-      gap: 4px;
-    }
-
-    .lang-bar button {
-      background: none;
-      border: 1px solid transparent;
-      color: rgba(168, 212, 240, 0.45);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      padding: 5px 10px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.25s;
-      text-transform: uppercase;
-      font-weight: 400;
-    }
-
-    .lang-bar button:hover {
-      color: rgba(168, 212, 240, 0.8);
-      border-color: rgba(126, 200, 227, 0.2);
-    }
-
-    .lang-bar button.active {
-      color: rgba(255, 255, 255, 0.9);
-      border-color: rgba(126, 200, 227, 0.35);
-      background: rgba(126, 200, 227, 0.1);
-    }
-
-    .lang-bar .lang-sep {
-      color: rgba(126, 200, 227, 0.15);
-      font-size: 0.7rem;
-      user-select: none;
-    }
-
-    /* --- TOAST --- */
+    /* === TOAST === */
     .toast {
       position: fixed;
-      bottom: 32px;
+      bottom: 36px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: rgba(126, 200, 227, 0.15);
-      border: 1px solid rgba(126, 200, 227, 0.3);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 14px 28px;
-      border-radius: 6px;
+      background: rgba(126, 200, 227, 0.12);
+      border: 1px solid rgba(126, 200, 227, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 16px 32px;
+      border-radius: 8px;
       font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.92);
       opacity: 0;
-      transition: opacity 0.4s, transform 0.4s;
-      z-index: 100;
+      transition: opacity 0.5s, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 300;
       pointer-events: none;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     }
 
     .toast.visible {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
+
+    /* === SCROLL REVEAL === */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 600px) {
+      .signup-form {
+        flex-direction: column;
+      }
+
+      .signup-form input[type="email"] {
+        border-radius: 8px 8px 0 0;
+      }
+
+      .signup-form button {
+        border-left: none;
+        border-top: 1px solid rgba(126, 200, 227, 0.1);
+        border-radius: 0 0 8px 8px;
+      }
+
+      .features { grid-template-columns: 1fr; gap: 16px; }
+      .stats-inner { grid-template-columns: 1fr; gap: 16px; }
+      .gallery-row { flex-direction: column; align-items: center; }
+      .gallery-item { max-width: 100%; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- AURORA OVERLAY -->
+  <div class="aurora"></div>
+
+  <!-- SNOWFALL -->
+  <canvas id="snowCanvas"></canvas>
 
   <!-- LANGUAGE BAR -->
   <nav class="lang-bar" aria-label="Language selection">
@@ -476,8 +762,8 @@
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
-    <div class="hero-bg">
+  <section class="hero" id="hero">
+    <div class="hero-bg" id="heroBg">
       <img src="IMG_1054.PNG" alt="LUMICE ice castle glowing at twilight">
     </div>
     <div class="hero-content">
@@ -486,15 +772,17 @@
       <div class="hero-divider"></div>
       <p class="coming-soon">Coming Soon</p>
       <p class="season">Winter 2026&ndash;2027</p>
-      <form class="signup-form" id="signupForm">
-        <input type="email" placeholder="Enter your email" required aria-label="Email address">
-        <button type="submit">Notify Me</button>
-      </form>
-      <p class="signup-note">Be the first to know when we open</p>
+      <div class="signup-wrapper">
+        <form class="signup-form" id="signupForm">
+          <input type="email" placeholder="Enter your email" required aria-label="Email address">
+          <button type="submit">Notify Me</button>
+        </form>
+        <p class="signup-note">Be the first to know when we open</p>
+      </div>
     </div>
     <button class="scroll-cue" onclick="document.querySelector('.about').scrollIntoView({behavior:'smooth'})" aria-label="Scroll down">
       <span>Discover</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      <div class="cue-line"></div>
     </button>
   </section>
 
@@ -504,29 +792,70 @@
       <img src="IMG_1055.PNG" alt="Ice structures under the Northern Lights">
     </div>
     <div class="about-content">
-      <p class="about-label">Born from Ice &amp; Light</p>
-      <h2 class="about-heading">Where frozen architecture meets the aurora</h2>
-      <p class="about-text">
+      <p class="about-label reveal">Born from Ice &amp; Light</p>
+      <h2 class="about-heading reveal reveal-delay-1">Where frozen architecture meets the aurora</h2>
+      <p class="about-text reveal reveal-delay-2">
         Deep in Finnish Lapland, LUMICE rises each winter as a cathedral of ice and light.
         Sculptors, architects and lighting artists shape thousands of tonnes of crystal-clear
         ice into immersive spaces that glow from within.
       </p>
-      <p class="about-text">
+      <p class="about-text reveal reveal-delay-3">
         Walk through luminous corridors, explore frozen halls, and witness the Northern Lights
         from a place that exists for only one season.
       </p>
 
       <div class="features">
-        <div class="feature">
+        <div class="feature reveal reveal-delay-1">
           <span class="feature-icon" aria-hidden="true">&#10052;</span>
           <p class="feature-title">Ice Architecture</p>
           <p class="feature-desc">Hand-carved halls and tunnels of pure glacial ice</p>
         </div>
-        <div class="feature">
+        <div class="feature reveal reveal-delay-2">
           <span class="feature-icon" aria-hidden="true">&#10038;</span>
           <p class="feature-title">Northern Lights</p>
           <p class="feature-desc">Prime aurora viewing from the Arctic Circle</p>
         </div>
+        <div class="feature reveal reveal-delay-3">
+          <span class="feature-icon" aria-hidden="true">&#9733;</span>
+          <p class="feature-title">Ice Lounge</p>
+          <p class="feature-desc">Sip warm drinks in frozen elegance beneath the stars</p>
+        </div>
+        <div class="feature reveal reveal-delay-4">
+          <span class="feature-icon" aria-hidden="true">&#9830;</span>
+          <p class="feature-title">Light Shows</p>
+          <p class="feature-desc">Immersive projections that bring ice to luminous life</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stats-inner">
+      <div class="stat reveal">
+        <p class="stat-num" data-target="5000">0</p>
+        <p class="stat-label">Tonnes of Ice</p>
+      </div>
+      <div class="stat reveal reveal-delay-1">
+        <p class="stat-num" data-target="12">0</p>
+        <p class="stat-label">Immersive Halls</p>
+      </div>
+      <div class="stat reveal reveal-delay-2">
+        <p class="stat-num" data-target="90">0</p>
+        <p class="stat-label">Days Each Winter</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY TEASER -->
+  <section class="gallery-teaser">
+    <p class="section-label reveal">A Glimpse Inside</p>
+    <div class="gallery-row">
+      <div class="gallery-item reveal reveal-delay-1">
+        <img src="IMG_1054.PNG" alt="Ice architecture interior">
+      </div>
+      <div class="gallery-item reveal reveal-delay-2">
+        <img src="IMG_1055.PNG" alt="Northern lights over ice structures">
       </div>
     </div>
   </section>
@@ -542,6 +871,106 @@
   <div class="toast" id="toast">Thank you! We'll be in touch.</div>
 
   <script>
+    /* === SNOWFALL PARTICLE SYSTEM === */
+    (function() {
+      const canvas = document.getElementById('snowCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      const COUNT = 80;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      for (let i = 0; i < COUNT; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2.5 + 0.5,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: Math.random() * 0.6 + 0.2,
+          opacity: Math.random() * 0.5 + 0.1,
+          flicker: Math.random() * Math.PI * 2
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.flicker += 0.01;
+          const o = p.opacity * (0.7 + 0.3 * Math.sin(p.flicker));
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(200, 220, 240, ${o})`;
+          ctx.fill();
+
+          // subtle glow
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(126, 200, 227, ${o * 0.1})`;
+          ctx.fill();
+
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.y > canvas.height + 10) { p.y = -10; p.x = Math.random() * canvas.width; }
+          if (p.x > canvas.width + 10) p.x = -10;
+          if (p.x < -10) p.x = canvas.width + 10;
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* === PARALLAX === */
+    const heroBg = document.getElementById('heroBg');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y < window.innerHeight * 1.2) {
+        heroBg.style.transform = `translateY(${y * 0.35}px)`;
+      }
+      // Lang bar bg on scroll
+      document.querySelector('.lang-bar').classList.toggle('scrolled', y > 80);
+    }, { passive: true });
+
+    /* === SCROLL REVEAL === */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* === COUNTER ANIMATION === */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target);
+          const duration = 2000;
+          const start = performance.now();
+
+          function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(target * eased).toLocaleString();
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-num').forEach(el => counterObserver.observe(el));
+
+    /* === TRANSLATIONS === */
     const translations = {
       en: {
         tagline: 'A Finnish Ice Experience',
@@ -555,145 +984,112 @@
         heading: 'Where frozen architecture meets the aurora',
         text1: 'Deep in Finnish Lapland, LUMICE rises each winter as a cathedral of ice and light. Sculptors, architects and lighting artists shape thousands of tonnes of crystal-clear ice into immersive spaces that glow from within.',
         text2: 'Walk through luminous corridors, explore frozen halls, and witness the Northern Lights from a place that exists for only one season.',
-        feat1Title: 'Ice Architecture',
-        feat1Desc: 'Hand-carved halls and tunnels of pure glacial ice',
-        feat2Title: 'Northern Lights',
-        feat2Desc: 'Prime aurora viewing from the Arctic Circle',
+        feat1Title: 'Ice Architecture', feat1Desc: 'Hand-carved halls and tunnels of pure glacial ice',
+        feat2Title: 'Northern Lights', feat2Desc: 'Prime aurora viewing from the Arctic Circle',
+        feat3Title: 'Ice Lounge', feat3Desc: 'Sip warm drinks in frozen elegance beneath the stars',
+        feat4Title: 'Light Shows', feat4Desc: 'Immersive projections that bring ice to luminous life',
+        stat1: 'Tonnes of Ice', stat2: 'Immersive Halls', stat3: 'Days Each Winter',
+        gallery: 'A Glimpse Inside',
         location: 'Lapland, Finland',
-        toast: 'Thank you! We\'ll be in touch.'
+        toast: "Thank you! We'll be in touch."
       },
       fi: {
-        tagline: 'Suomalainen jääelämys',
-        coming: 'Tulossa pian',
-        season: 'Talvi 2026–2027',
-        placeholder: 'Sähköpostiosoitteesi',
-        notify: 'Ilmoita minulle',
-        signupNote: 'Ole ensimmäinen, joka saa tiedon avajaistamme',
-        discover: 'Tutustu',
-        label: 'Syntynyt jäästä ja valosta',
-        heading: 'Missä jäinen arkkitehtuuri kohtaa revontulet',
+        tagline: 'Suomalainen jääelämys', coming: 'Tulossa pian', season: 'Talvi 2026–2027',
+        placeholder: 'Sähköpostiosoitteesi', notify: 'Ilmoita minulle',
+        signupNote: 'Ole ensimmäinen, joka saa tiedon avajaistamme', discover: 'Tutustu',
+        label: 'Syntynyt jäästä ja valosta', heading: 'Missä jäinen arkkitehtuuri kohtaa revontulet',
         text1: 'Syvällä Suomen Lapissa LUMICE nousee joka talvi jään ja valon katedraaliksi. Kuvanveistäjät, arkkitehdit ja valotaiteilijat muovaavat tuhansia tonneja kirkasta jäätä elämyksellisiksi tiloiksi, jotka hehkuvat sisältäpäin.',
         text2: 'Kulje valaistujen käytävien läpi, tutki jäisiä saleja ja koe revontulet paikasta, joka on olemassa vain yhden kauden.',
-        feat1Title: 'Jääarkkitehtuuri',
-        feat1Desc: 'Käsin veistetyt salit ja tunnelit puhtaasta jäästä',
-        feat2Title: 'Revontulet',
-        feat2Desc: 'Ainutlaatuinen revontulien katselupaikka napapiirillä',
-        location: 'Lappi, Suomi',
-        toast: 'Kiitos! Otamme sinuun yhteyttä.'
+        feat1Title: 'Jääarkkitehtuuri', feat1Desc: 'Käsin veistetyt salit ja tunnelit puhtaasta jäästä',
+        feat2Title: 'Revontulet', feat2Desc: 'Ainutlaatuinen revontulien katselupaikka napapiirillä',
+        feat3Title: 'Jäälounge', feat3Desc: 'Nauti lämpimistä juomista jäisen eleganssin keskellä',
+        feat4Title: 'Valoshow', feat4Desc: 'Immersiiviset projektiot herättävät jään eloon',
+        stat1: 'Tonnia jäätä', stat2: 'Elämyssalia', stat3: 'Päivää talvessa',
+        gallery: 'Vilkaisu sisälle', location: 'Lappi, Suomi', toast: 'Kiitos! Otamme sinuun yhteyttä.'
       },
       sv: {
-        tagline: 'En finsk isupplevelse',
-        coming: 'Kommer snart',
-        season: 'Vinter 2026–2027',
-        placeholder: 'Din e-postadress',
-        notify: 'Meddela mig',
-        signupNote: 'Bli först att veta när vi öppnar',
-        discover: 'Utforska',
-        label: 'Född ur is och ljus',
-        heading: 'Där frusen arkitektur möter norrskenet',
+        tagline: 'En finsk isupplevelse', coming: 'Kommer snart', season: 'Vinter 2026–2027',
+        placeholder: 'Din e-postadress', notify: 'Meddela mig',
+        signupNote: 'Bli först att veta när vi öppnar', discover: 'Utforska',
+        label: 'Född ur is och ljus', heading: 'Där frusen arkitektur möter norrskenet',
         text1: 'Djupt i finska Lappland reser sig LUMICE varje vinter som en katedral av is och ljus. Skulptörer, arkitekter och ljuskonstnärer formar tusentals ton kristallklar is till uppslukande rum som lyser inifrån.',
         text2: 'Vandra genom lysande korridorer, utforska frusna salar och upplev norrskenet från en plats som bara existerar en säsong.',
-        feat1Title: 'Isarkitektur',
-        feat1Desc: 'Handhuggna salar och tunnlar av ren glaciäris',
-        feat2Title: 'Norrsken',
-        feat2Desc: 'Förstklassig norrskensskådning vid polcirkeln',
-        location: 'Lappland, Finland',
-        toast: 'Tack! Vi hör av oss.'
+        feat1Title: 'Isarkitektur', feat1Desc: 'Handhuggna salar och tunnlar av ren glaciäris',
+        feat2Title: 'Norrsken', feat2Desc: 'Förstklassig norrskensskådning vid polcirkeln',
+        feat3Title: 'Islounge', feat3Desc: 'Njut av varma drycker i frusen elegans under stjärnorna',
+        feat4Title: 'Ljusshow', feat4Desc: 'Uppslukande projektioner som väcker isen till liv',
+        stat1: 'Ton is', stat2: 'Uppslukande hallar', stat3: 'Dagar varje vinter',
+        gallery: 'En glimt inifrån', location: 'Lappland, Finland', toast: 'Tack! Vi hör av oss.'
       },
       de: {
-        tagline: 'Ein finnisches Eis-Erlebnis',
-        coming: 'Demnächst',
-        season: 'Winter 2026–2027',
-        placeholder: 'Ihre E-Mail-Adresse',
-        notify: 'Benachrichtigen',
-        signupNote: 'Erfahren Sie als Erstes, wenn wir öffnen',
-        discover: 'Entdecken',
-        label: 'Aus Eis und Licht geboren',
-        heading: 'Wo gefrorene Architektur auf Nordlichter trifft',
+        tagline: 'Ein finnisches Eis-Erlebnis', coming: 'Demnächst', season: 'Winter 2026–2027',
+        placeholder: 'Ihre E-Mail-Adresse', notify: 'Benachrichtigen',
+        signupNote: 'Erfahren Sie als Erstes, wenn wir öffnen', discover: 'Entdecken',
+        label: 'Aus Eis und Licht geboren', heading: 'Wo gefrorene Architektur auf Nordlichter trifft',
         text1: 'Tief im finnischen Lappland erhebt sich LUMICE jeden Winter als Kathedrale aus Eis und Licht. Bildhauer, Architekten und Lichtkünstler formen tausende Tonnen kristallklares Eis zu immersiven Räumen, die von innen leuchten.',
         text2: 'Wandeln Sie durch leuchtende Korridore, erkunden Sie gefrorene Hallen und erleben Sie die Nordlichter an einem Ort, der nur eine Saison lang existiert.',
-        feat1Title: 'Eis-Architektur',
-        feat1Desc: 'Handgeschnitzte Hallen und Tunnel aus reinem Gletschereis',
-        feat2Title: 'Nordlichter',
-        feat2Desc: 'Erstklassige Polarlichter am Polarkreis',
-        location: 'Lappland, Finnland',
-        toast: 'Vielen Dank! Wir melden uns bei Ihnen.'
+        feat1Title: 'Eis-Architektur', feat1Desc: 'Handgeschnitzte Hallen und Tunnel aus reinem Gletschereis',
+        feat2Title: 'Nordlichter', feat2Desc: 'Erstklassige Polarlichter am Polarkreis',
+        feat3Title: 'Eis-Lounge', feat3Desc: 'Warme Getränke in eisiger Eleganz unter dem Sternenhimmel',
+        feat4Title: 'Lichtshows', feat4Desc: 'Immersive Projektionen erwecken das Eis zum Leuchten',
+        stat1: 'Tonnen Eis', stat2: 'Erlebnishallen', stat3: 'Tage pro Winter',
+        gallery: 'Ein Blick hinein', location: 'Lappland, Finnland', toast: 'Vielen Dank! Wir melden uns bei Ihnen.'
       },
       fr: {
-        tagline: 'Une expérience glacée finlandaise',
-        coming: 'Bientôt disponible',
-        season: 'Hiver 2026–2027',
-        placeholder: 'Votre adresse e-mail',
-        notify: 'Me prévenir',
-        signupNote: 'Soyez le premier informé de notre ouverture',
-        discover: 'Découvrir',
-        label: 'Né de la glace et de la lumière',
-        heading: 'Là où l\'architecture gelée rencontre les aurores boréales',
-        text1: 'Au cœur de la Laponie finlandaise, LUMICE s\'élève chaque hiver telle une cathédrale de glace et de lumière. Sculpteurs, architectes et artistes lumière façonnent des milliers de tonnes de glace cristalline en espaces immersifs irradiant de l\'intérieur.',
-        text2: 'Parcourez des couloirs lumineux, explorez des salles gelées et contemplez les aurores boréales depuis un lieu qui n\'existe que le temps d\'une saison.',
-        feat1Title: 'Architecture de glace',
-        feat1Desc: 'Salles et tunnels sculptés à la main dans la glace pure',
-        feat2Title: 'Aurores boréales',
-        feat2Desc: 'Observation privilégiée depuis le cercle polaire',
-        location: 'Laponie, Finlande',
-        toast: 'Merci ! Nous vous contacterons.'
+        tagline: 'Une expérience glacée finlandaise', coming: 'Bientôt disponible', season: 'Hiver 2026–2027',
+        placeholder: 'Votre adresse e-mail', notify: 'Me prévenir',
+        signupNote: 'Soyez le premier informé de notre ouverture', discover: 'Découvrir',
+        label: 'Né de la glace et de la lumière', heading: "Là où l'architecture gelée rencontre les aurores boréales",
+        text1: "Au cœur de la Laponie finlandaise, LUMICE s'élève chaque hiver telle une cathédrale de glace et de lumière. Sculpteurs, architectes et artistes lumière façonnent des milliers de tonnes de glace cristalline en espaces immersifs irradiant de l'intérieur.",
+        text2: "Parcourez des couloirs lumineux, explorez des salles gelées et contemplez les aurores boréales depuis un lieu qui n'existe que le temps d'une saison.",
+        feat1Title: 'Architecture de glace', feat1Desc: 'Salles et tunnels sculptés à la main dans la glace pure',
+        feat2Title: 'Aurores boréales', feat2Desc: 'Observation privilégiée depuis le cercle polaire',
+        feat3Title: 'Salon de glace', feat3Desc: 'Savourez des boissons chaudes dans une élégance glacée',
+        feat4Title: 'Spectacles de lumière', feat4Desc: 'Projections immersives illuminant la glace',
+        stat1: 'Tonnes de glace', stat2: 'Salles immersives', stat3: 'Jours chaque hiver',
+        gallery: 'Un aperçu', location: 'Laponie, Finlande', toast: 'Merci ! Nous vous contacterons.'
       },
       ja: {
-        tagline: 'フィンランドの氷の体験',
-        coming: '近日公開',
-        season: '2026–2027年冬',
-        placeholder: 'メールアドレスを入力',
-        notify: '通知を受け取る',
-        signupNote: 'オープン時にいち早くお知らせします',
-        discover: '詳しく見る',
-        label: '氷と光から生まれた',
-        heading: '凍った建築とオーロラが出会う場所',
+        tagline: 'フィンランドの氷の体験', coming: '近日公開', season: '2026–2027年冬',
+        placeholder: 'メールアドレスを入力', notify: '通知を受け取る',
+        signupNote: 'オープン時にいち早くお知らせします', discover: '詳しく見る',
+        label: '氷と光から生まれた', heading: '凍った建築とオーロラが出会う場所',
         text1: 'フィンランド・ラップランドの奥深くで、LUMICEは毎冬、氷と光の大聖堂として姿を現します。彫刻家、建築家、照明アーティストが数千トンの透明な氷を、内側から輝く没入空間へと形作ります。',
         text2: '光に満ちた回廊を歩き、凍てついたホールを探検し、ひとつの季節だけ存在する場所からオーロラを眺めてください。',
-        feat1Title: '氷の建築',
-        feat1Desc: '純粋な氷河の氷から手彫りされたホールとトンネル',
-        feat2Title: 'オーロラ',
-        feat2Desc: '北極圏からの最高のオーロラ観賞',
-        location: 'ラップランド、フィンランド',
-        toast: 'ありがとうございます！ご連絡いたします。'
+        feat1Title: '氷の建築', feat1Desc: '純粋な氷河の氷から手彫りされたホールとトンネル',
+        feat2Title: 'オーロラ', feat2Desc: '北極圏からの最高のオーロラ観賞',
+        feat3Title: 'アイスラウンジ', feat3Desc: '星空の下、氷の優雅さの中で温かい飲み物を',
+        feat4Title: 'ライトショー', feat4Desc: '氷に命を吹き込む没入型プロジェクション',
+        stat1: 'トンの氷', stat2: '没入型ホール', stat3: '日間の冬季開催',
+        gallery: '内部をのぞく', location: 'ラップランド、フィンランド', toast: 'ありがとうございます！ご連絡いたします。'
       },
       zh: {
-        tagline: '芬兰冰雪体验',
-        coming: '即将开放',
-        season: '2026–2027年冬季',
-        placeholder: '请输入电子邮箱',
-        notify: '通知我',
-        signupNote: '第一时间获取开放通知',
-        discover: '探索',
-        label: '诞生于冰与光',
-        heading: '冰冻建筑与极光交汇之处',
+        tagline: '芬兰冰雪体验', coming: '即将开放', season: '2026–2027年冬季',
+        placeholder: '请输入电子邮箱', notify: '通知我',
+        signupNote: '第一时间获取开放通知', discover: '探索',
+        label: '诞生于冰与光', heading: '冰冻建筑与极光交汇之处',
         text1: '在芬兰拉普兰的深处，LUMICE每个冬天都会化身为一座冰与光的大教堂。雕塑家、建筑师和灯光艺术家将数千吨晶莹剔透的冰块塑造成从内部发光的沉浸式空间。',
         text2: '穿行于光芒四射的走廊，探索冰封的大厅，在这个仅存在一季的地方见证北极光。',
-        feat1Title: '冰雪建筑',
-        feat1Desc: '由纯净冰川冰手工雕刻的大厅与隧道',
-        feat2Title: '北极光',
-        feat2Desc: '北极圈内的极光最佳观赏地',
-        location: '拉普兰，芬兰',
-        toast: '谢谢！我们会与您联系。'
+        feat1Title: '冰雪建筑', feat1Desc: '由纯净冰川冰手工雕刻的大厅与隧道',
+        feat2Title: '北极光', feat2Desc: '北极圈内的极光最佳观赏地',
+        feat3Title: '冰雪酒廊', feat3Desc: '在星空下的冰雪优雅中品味热饮',
+        feat4Title: '灯光秀', feat4Desc: '让冰雪焕发生命的沉浸式投影',
+        stat1: '吨冰', stat2: '沉浸式大厅', stat3: '天冬季开放',
+        gallery: '一窥内部', location: '拉普兰，芬兰', toast: '谢谢！我们会与您联系。'
       },
       ru: {
-        tagline: 'Финский ледяной опыт',
-        coming: 'Скоро открытие',
-        season: 'Зима 2026–2027',
-        placeholder: 'Ваш email',
-        notify: 'Уведомить',
-        signupNote: 'Узнайте первыми о нашем открытии',
-        discover: 'Узнать больше',
-        label: 'Рождённый изо льда и света',
-        heading: 'Где ледяная архитектура встречает северное сияние',
+        tagline: 'Финский ледяной опыт', coming: 'Скоро открытие', season: 'Зима 2026–2027',
+        placeholder: 'Ваш email', notify: 'Уведомить',
+        signupNote: 'Узнайте первыми о нашем открытии', discover: 'Узнать больше',
+        label: 'Рождённый изо льда и света', heading: 'Где ледяная архитектура встречает северное сияние',
         text1: 'В самом сердце финской Лапландии LUMICE каждую зиму возрождается как собор изо льда и света. Скульпторы, архитекторы и художники по свету превращают тысячи тонн кристально чистого льда в иммерсивные пространства, светящиеся изнутри.',
         text2: 'Пройдите через светящиеся коридоры, исследуйте ледяные залы и наблюдайте северное сияние из места, которое существует лишь один сезон.',
-        feat1Title: 'Ледяная архитектура',
-        feat1Desc: 'Вручную вырезанные залы и тоннели из чистого ледникового льда',
-        feat2Title: 'Северное сияние',
-        feat2Desc: 'Лучшие виды на полярное сияние за полярным кругом',
-        location: 'Лапландия, Финляндия',
-        toast: 'Спасибо! Мы свяжемся с вами.'
+        feat1Title: 'Ледяная архитектура', feat1Desc: 'Вручную вырезанные залы и тоннели из чистого ледникового льда',
+        feat2Title: 'Северное сияние', feat2Desc: 'Лучшие виды на полярное сияние за полярным кругом',
+        feat3Title: 'Ледяной лаунж', feat3Desc: 'Тёплые напитки в ледяной элегантности под звёздами',
+        feat4Title: 'Световое шоу', feat4Desc: 'Иммерсивные проекции, оживляющие лёд светом',
+        stat1: 'Тонн льда', stat2: 'Иммерсивных залов', stat3: 'Дней каждую зиму',
+        gallery: 'Загляните внутрь', location: 'Лапландия, Финляндия', toast: 'Спасибо! Мы свяжемся с вами.'
       }
     };
 
@@ -701,7 +1097,6 @@
       const t = translations[lang] || translations.en;
       document.documentElement.lang = lang;
 
-      // Update text content
       document.querySelector('.tagline').textContent = t.tagline;
       document.querySelector('.coming-soon').textContent = t.coming;
       document.querySelector('.season').textContent = t.season;
@@ -718,38 +1113,45 @@
       features[0].querySelector('.feature-desc').textContent = t.feat1Desc;
       features[1].querySelector('.feature-title').textContent = t.feat2Title;
       features[1].querySelector('.feature-desc').textContent = t.feat2Desc;
+      features[2].querySelector('.feature-title').textContent = t.feat3Title;
+      features[2].querySelector('.feature-desc').textContent = t.feat3Desc;
+      features[3].querySelector('.feature-title').textContent = t.feat4Title;
+      features[3].querySelector('.feature-desc').textContent = t.feat4Desc;
+
+      const stats = document.querySelectorAll('.stat-label');
+      stats[0].textContent = t.stat1;
+      stats[1].textContent = t.stat2;
+      stats[2].textContent = t.stat3;
+
+      document.querySelector('.section-label').textContent = t.gallery;
       document.querySelector('.footer-location').textContent = t.location;
       document.getElementById('toast').textContent = t.toast;
 
-      // Update active button
       document.querySelectorAll('.lang-bar button').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
       });
 
-      // Save preference
       try { localStorage.setItem('lumice-lang', lang); } catch(e) {}
     }
 
-    // Language bar click handlers
     document.querySelectorAll('.lang-bar button').forEach(btn => {
       btn.addEventListener('click', () => setLang(btn.dataset.lang));
     });
 
-    // Restore saved language or detect from browser
     (function() {
       const saved = localStorage.getItem('lumice-lang');
       if (saved && translations[saved]) { setLang(saved); return; }
-      const browserLang = (navigator.language || '').slice(0, 2).toLowerCase();
-      if (translations[browserLang]) { setLang(browserLang); }
+      const bl = (navigator.language || '').slice(0, 2).toLowerCase();
+      if (translations[bl]) setLang(bl);
     })();
 
-    // Signup form
+    /* === SIGNUP FORM === */
     document.getElementById('signupForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const toast = document.getElementById('toast');
       toast.classList.add('visible');
       this.querySelector('input').value = '';
-      setTimeout(() => toast.classList.remove('visible'), 3000);
+      setTimeout(() => toast.classList.remove('visible'), 3500);
     });
   </script>
 
