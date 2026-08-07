@@ -14,14 +14,33 @@ class DocumentParser(HTMLParser):
         super().__init__()
         self.attributes = []
         self.text = []
+        self.links = []
+        self._active_link = None
+        self._ignored_depth = 0
 
     def handle_starttag(self, tag, attrs):
-        self.attributes.append((tag, dict(attrs)))
+        attributes = dict(attrs)
+        self.attributes.append((tag, attributes))
+        if tag in {"style", "script"}:
+            self._ignored_depth += 1
+        if tag == "a":
+            self._active_link = {"href": attributes.get("href"), "text": []}
 
     def handle_data(self, data):
         value = " ".join(data.split())
-        if value:
+        if value and not self._ignored_depth:
             self.text.append(value)
+            if self._active_link is not None:
+                self._active_link["text"].append(value)
+
+    def handle_endtag(self, tag):
+        if tag in {"style", "script"} and self._ignored_depth:
+            self._ignored_depth -= 1
+        if tag == "a" and self._active_link is not None:
+            self.links.append(
+                (self._active_link["href"], " ".join(self._active_link["text"]))
+            )
+            self._active_link = None
 
 
 def parse(relative_path: str) -> DocumentParser:
@@ -138,6 +157,39 @@ process.stdout.write(JSON.stringify({ lang: document.documentElement.lang, statu
             result.stdout,
             '{"lang":"fi","status":"Konsepti on tällä hetkellä tauolla"}',
         )
+
+
+class GatewayTests(unittest.TestCase):
+    def test_gateway_offers_two_equal_project_links(self):
+        document = parse("index.html")
+        project_links = [
+            (href, text)
+            for href, text in document.links
+            if href in {"brian-head/", "fn/"}
+        ]
+
+        self.assertCountEqual(
+            project_links,
+            [("brian-head/", "Explore Project"), ("fn/", "Explore Project")],
+        )
+        visible_text = " ".join(document.text)
+        self.assertIn("Brian Head", visible_text)
+        self.assertIn("Finland", visible_text)
+
+    def test_gateway_is_neutral_and_uses_shared_experience(self):
+        document = parse("index.html")
+        visible_text = " ".join(document.text)
+        stylesheets = [attributes.get("href") for tag, attributes in document.attributes if tag == "link"]
+        scripts = [attributes.get("src") for tag, attributes in document.attributes if tag == "script"]
+        images = [attributes for tag, attributes in document.attributes if tag == "img"]
+
+        self.assertNotIn("Coming Soon", visible_text)
+        self.assertNotIn("Concept currently paused", visible_text)
+        self.assertNotIn("Proposed for Brian Head", visible_text)
+        self.assertIn("assets/site.css", stylesheets)
+        self.assertIn("assets/ambient.js", scripts)
+        self.assertIn("assets/brian-head-concept.webp", [image.get("src") for image in images])
+        self.assertTrue(all(image.get("alt") for image in images))
 
 
 if __name__ == "__main__":
