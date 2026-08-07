@@ -425,6 +425,12 @@ a {
   border-radius: 12px;
 }
 
+.gallery__item--wide {
+  width: 100%;
+  max-width: 920px;
+  aspect-ratio: 16 / 9;
+}
+
 .gallery__item::after {
   content: "";
   position: absolute;

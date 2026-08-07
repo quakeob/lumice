@@ -7,6 +7,8 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 FN_HTML_EXISTS = (ROOT / "fn/index.html").is_file()
 FN_SCRIPT_EXISTS = (ROOT / "fn/finland.js").is_file()
+BRIAN_HEAD_HTML_EXISTS = (ROOT / "brian-head/index.html").is_file()
+BRIAN_HEAD_IMAGE_EXISTS = (ROOT / "assets/brian-head-concept.webp").is_file()
 
 
 class DocumentParser(HTMLParser):
@@ -190,6 +192,45 @@ class GatewayTests(unittest.TestCase):
         self.assertIn("assets/ambient.js", scripts)
         self.assertIn("assets/brian-head-concept.webp", [image.get("src") for image in images])
         self.assertTrue(all(image.get("alt") for image in images))
+
+
+class BrianHeadPageTests(unittest.TestCase):
+    def test_brian_head_route_and_image_exist(self):
+        self.assertTrue(BRIAN_HEAD_HTML_EXISTS)
+        self.assertTrue(BRIAN_HEAD_IMAGE_EXISTS)
+
+    @unittest.skipUnless(BRIAN_HEAD_HTML_EXISTS, "Brian Head route not implemented yet")
+    def test_page_is_unambiguously_proposed(self):
+        document = parse("brian-head/index.html")
+        visible_text = " ".join(document.text)
+
+        self.assertIn("Proposed for Brian Head, Utah", visible_text)
+        self.assertGreaterEqual(visible_text.lower().count("proposed"), 2)
+        for forbidden in ("coming soon", "winter 2026", "highest ski resort in the west", "5,000", "12 immersive"):
+            self.assertNotIn(forbidden, visible_text.lower())
+
+    @unittest.skipUnless(BRIAN_HEAD_HTML_EXISTS, "Brian Head route not implemented yet")
+    def test_page_uses_supported_claims_conditional_copy_and_navigation(self):
+        document = parse("brian-head/index.html")
+        visible_text = " ".join(document.text)
+        hrefs = [href for href, _ in document.links]
+        images = [attributes for tag, attributes in document.attributes if tag == "img"]
+
+        self.assertIn("Utah’s highest base elevation", visible_text)
+        self.assertIn("could include", visible_text)
+        self.assertIn("../", hrefs)
+        self.assertIn("https://www.brianhead.com/about-us-brian-head-resort/", hrefs)
+        concept_images = [
+            image for image in images
+            if image.get("src") == "../assets/brian-head-concept.webp"
+        ]
+        self.assertTrue(concept_images)
+        self.assertTrue(all("Concept rendering" in image.get("alt", "") for image in concept_images))
+
+    @unittest.skipUnless(BRIAN_HEAD_IMAGE_EXISTS, "Brian Head image not implemented yet")
+    def test_concept_image_is_web_optimized(self):
+        image = ROOT / "assets/brian-head-concept.webp"
+        self.assertLess(image.stat().st_size, 1_500_000)
 
 
 if __name__ == "__main__":
