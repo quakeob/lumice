@@ -570,6 +570,10 @@ a {
   opacity: 0.42;
 }
 
+.page-finland .site-header__home {
+  margin-right: 92px;
+}
+
 @media (max-width: 640px) {
   .site-header {
     padding: 18px 20px;
@@ -613,6 +617,10 @@ a {
 
   .lang-dropdown {
     right: 16px;
+  }
+
+  .page-finland .site-header__home {
+    display: none;
   }
 }
 

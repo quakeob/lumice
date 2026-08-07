@@ -5,6 +5,8 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+FN_HTML_EXISTS = (ROOT / "fn/index.html").is_file()
+FN_SCRIPT_EXISTS = (ROOT / "fn/finland.js").is_file()
 
 
 class DocumentParser(HTMLParser):
@@ -61,6 +63,81 @@ require('./assets/ambient.js');
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class FinlandPageTests(unittest.TestCase):
+    def test_finland_route_exists(self):
+        self.assertTrue(FN_HTML_EXISTS)
+        self.assertTrue(FN_SCRIPT_EXISTS)
+
+    @unittest.skipUnless(FN_HTML_EXISTS, "Finland route not implemented yet")
+    def test_finland_is_paused_without_opening_claims_or_signup(self):
+        document = parse("fn/index.html")
+        visible_text = " ".join(document.text)
+        classes = {
+            class_name
+            for _, attributes in document.attributes
+            for class_name in attributes.get("class", "").split()
+        }
+
+        self.assertIn("Concept currently paused", visible_text)
+        for forbidden in ("Coming Soon", "Winter 2026", "Notify Me", "5,000", "Immersive Halls"):
+            self.assertNotIn(forbidden, visible_text)
+        self.assertNotIn("form", [tag for tag, _ in document.attributes])
+        self.assertNotIn("stats", classes)
+
+    @unittest.skipUnless(FN_HTML_EXISTS, "Finland route not implemented yet")
+    def test_finland_preserves_assets_navigation_and_languages(self):
+        document = parse("fn/index.html")
+        hrefs = [attributes.get("href") for tag, attributes in document.attributes if tag == "a"]
+        stylesheets = [attributes.get("href") for tag, attributes in document.attributes if tag == "link"]
+        scripts = [attributes.get("src") for tag, attributes in document.attributes if tag == "script"]
+        images = [attributes.get("src") for tag, attributes in document.attributes if tag == "img"]
+        languages = {
+            attributes["data-lang"]
+            for tag, attributes in document.attributes
+            if tag == "button" and "data-lang" in attributes
+        }
+
+        self.assertIn("../", hrefs)
+        self.assertIn("../assets/site.css", stylesheets)
+        self.assertIn("../assets/ambient.js", scripts)
+        self.assertIn("finland.js", scripts)
+        self.assertIn("../IMG_1055.PNG", images)
+        self.assertIn("../IMG_1054.PNG", images)
+        self.assertEqual(languages, {"en", "fi", "sv", "de", "fr", "ja", "zh", "ru"})
+
+    @unittest.skipUnless(FN_SCRIPT_EXISTS, "Finland translations not implemented yet")
+    def test_finland_language_switch_updates_paused_status(self):
+        harness = """
+const nodes = [
+  { dataset: { i18n: 'tagline' }, textContent: '' },
+  { dataset: { i18n: 'status' }, textContent: '' },
+];
+global.window = {};
+global.localStorage = { getItem: () => null, setItem: () => {} };
+global.document = {
+  documentElement: { lang: 'en' },
+  querySelectorAll: (selector) => selector === '[data-i18n]' ? nodes : [],
+  getElementById: () => null,
+  addEventListener: () => {},
+};
+require('./fn/finland.js');
+window.setLang('fi');
+process.stdout.write(JSON.stringify({ lang: document.documentElement.lang, status: nodes[1].textContent }));
+"""
+        result = subprocess.run(
+            ["node", "-e", harness],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            result.stdout,
+            '{"lang":"fi","status":"Konsepti on tällä hetkellä tauolla"}',
+        )
 
 
 if __name__ == "__main__":

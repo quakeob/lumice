@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMICE Finland — Ice Experience Concept</title>
+  <meta name="description" content="LUMICE Finland — a paused concept for a seasonal Finnish ice experience.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body class="page-finland">
+  <div class="aurora" aria-hidden="true"></div>
+  <canvas id="snowCanvas" aria-hidden="true"></canvas>
+
+  <header class="site-header">
+    <a class="site-header__brand" href="../" aria-label="Lumice home">LUMICE</a>
+    <a class="site-header__home" href="../">All projects</a>
+  </header>
+
+  <div class="lang-dropdown" id="langDropdown">
+    <button class="lang-toggle" id="langToggle" type="button" aria-haspopup="true" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+      <span id="langCurrent">EN</span>
+    </button>
+    <div class="lang-menu" id="langMenu" role="menu">
+      <button data-lang="en" class="active" type="button" role="menuitem">English <span class="lang-native">EN</span></button>
+      <button data-lang="fi" type="button" role="menuitem">Suomi <span class="lang-native">FI</span></button>
+      <button data-lang="sv" type="button" role="menuitem">Svenska <span class="lang-native">SV</span></button>
+      <button data-lang="de" type="button" role="menuitem">Deutsch <span class="lang-native">DE</span></button>
+      <button data-lang="fr" type="button" role="menuitem">Français <span class="lang-native">FR</span></button>
+      <button data-lang="ja" type="button" role="menuitem">日本語 <span class="lang-native">JA</span></button>
+      <button data-lang="zh" type="button" role="menuitem">中文 <span class="lang-native">ZH</span></button>
+      <button data-lang="ru" type="button" role="menuitem">Русский <span class="lang-native">RU</span></button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero__background-wrap" data-parallax>
+        <img class="hero__background" src="../IMG_1055.PNG" alt="Concept rendering of luminous ice structures beneath the northern lights in Finland">
+      </div>
+      <div class="hero__content">
+        <h1 class="logo">LUMICE</h1>
+        <p class="tagline" data-i18n="tagline">A Finnish Ice Experience</p>
+        <div class="hero-divider" aria-hidden="true"></div>
+        <p class="status" data-i18n="status">Concept currently paused</p>
+        <p class="hero-note" data-i18n="heroNote">The Finland concept remains part of the Lumice vision while plans are on pause.</p>
+      </div>
+      <button class="scroll-cue" type="button" data-scroll-target="about" aria-label="Scroll to the Finland concept overview">
+        <span data-i18n="discover">Discover</span>
+        <span class="scroll-cue__line" aria-hidden="true"></span>
+      </button>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about__background">
+        <img src="../IMG_1054.PNG" alt="Concept rendering of illuminated ice architecture at twilight">
+      </div>
+      <div class="about__content">
+        <p class="about__label reveal" data-i18n="label">Born from Ice &amp; Light</p>
+        <h2 class="about__heading reveal reveal-delay-1" data-i18n="heading">Where frozen architecture meets the aurora</h2>
+        <p class="about__text reveal reveal-delay-2" data-i18n="text1">The LUMICE Finland concept imagines a seasonal world of ice and light in Finnish Lapland. Sculptors, architects, and lighting artists would shape crystal-clear ice into immersive spaces that glow from within.</p>
+        <p class="about__text reveal reveal-delay-3" data-i18n="text2">The experience could invite visitors through luminous corridors, frozen halls, and gathering spaces inspired by the northern landscape.</p>
+
+        <div class="features">
+          <article class="feature reveal reveal-delay-1">
+            <span class="feature__icon" aria-hidden="true">❄</span>
+            <h3 class="feature__title" data-i18n="feat1Title">Ice Architecture</h3>
+            <p class="feature__description" data-i18n="feat1Desc">A concept for hand-shaped halls and pathways made from ice</p>
+          </article>
+          <article class="feature reveal reveal-delay-2">
+            <span class="feature__icon" aria-hidden="true">✦</span>
+            <h3 class="feature__title" data-i18n="feat2Title">Northern Light</h3>
+            <p class="feature__description" data-i18n="feat2Desc">Lighting designed to echo the colors and movement of the aurora</p>
+          </article>
+          <article class="feature reveal reveal-delay-3">
+            <span class="feature__icon" aria-hidden="true">★</span>
+            <h3 class="feature__title" data-i18n="feat3Title">Winter Gathering</h3>
+            <p class="feature__description" data-i18n="feat3Desc">Seasonal spaces imagined for conversation, warmth, and discovery</p>
+          </article>
+          <article class="feature reveal reveal-delay-4">
+            <span class="feature__icon" aria-hidden="true">◆</span>
+            <h3 class="feature__title" data-i18n="feat4Title">Immersive Light</h3>
+            <p class="feature__description" data-i18n="feat4Desc">Projection and illumination concepts that bring frozen forms to life</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery" aria-labelledby="gallery-title">
+      <p class="section-label reveal" id="gallery-title" data-i18n="gallery">A Glimpse at the Concept</p>
+      <div class="gallery__row">
+        <figure class="gallery__item reveal reveal-delay-1">
+          <img src="../IMG_1055.PNG" alt="Concept rendering of ice structures under the aurora">
+        </figure>
+        <figure class="gallery__item reveal reveal-delay-2">
+          <img src="../IMG_1054.PNG" alt="Concept rendering of an illuminated frozen archway">
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer__logo">LUMICE</p>
+    <p class="footer__location" data-i18n="location">Lapland, Finland · Concept currently paused</p>
+    <p class="footer__copy">&copy; 2026 LUMICE. All rights reserved.</p>
+  </footer>
+
+  <script src="../assets/ambient.js"></script>
+  <script src="finland.js"></script>
+</body>
+</html>
