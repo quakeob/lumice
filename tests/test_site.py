@@ -52,6 +52,9 @@ def parse(relative_path: str) -> DocumentParser:
 
 
 class SharedAssetTests(unittest.TestCase):
+    def test_github_pages_skips_jekyll_processing(self):
+        self.assertTrue((ROOT / ".nojekyll").is_file())
+
     def test_shared_assets_exist(self):
         self.assertTrue((ROOT / "assets/site.css").is_file())
         self.assertTrue((ROOT / "assets/ambient.js").is_file())
